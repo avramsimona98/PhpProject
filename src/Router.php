@@ -31,11 +31,21 @@ namespace Framework;
 
         public function initialize($url, $routes)
         {
+            $this->checkGuard($url);
             $controller = $routes[$url]["controller"];
             $controller="\\App\\Controllers\\".$controller;
             $controllerObject = new $controller;
             $action = $routes[$url]["action"];
             $controllerObject->{$action}();
-            
+
         }
-}
+        private function checkGuard(string $route)
+        {
+            if (isset($this->routes[$route][‘guard’])) {
+                $guard = "\\App\\Guards\\" . $this->routes[$route]['guard'];
+                //instantiate and execute the handle action
+                (new $guard)->handle();
+
+	        }
+        }
+    }
