@@ -1,0 +1,9 @@
+<?php
+//$routes=[
+//"/"=>["controller"=>"IndexController","action"=>"index"]
+//"/post"=>["controller"=>"PostController","action"=>"index"]
+//];
+$route=[
+    "/page/about-us"=>["controller"=>"PageController","action"=>"aboutUsAction"],
+    "/user/{id}"=>["controller"=>"PageController","action"=>"showAction"]
+];
