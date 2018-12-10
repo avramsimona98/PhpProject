@@ -36,5 +36,6 @@ namespace Framework;
             $controllerObject = new $controller;
             $action = $routes[$url]["action"];
             $controllerObject->{$action}();
+            
         }
 }
