@@ -8,7 +8,7 @@
 namespace Framework;
     class Router
     {
-        public function match($url, $routes)
+        public function match($url, $routes): bool
         {
             if (isset($routes[$url])) {
                 $this->initialize($url, $routes);

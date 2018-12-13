@@ -15,11 +15,11 @@ abstract class Model
 
     public Function newDbCon($resultAsArray = false)
     {
-        $config = new Config;
-        $dsn = $config->db['driver'];
-        $dsn .= ";host=$config->db['host']";
-        $dsn .= ";dbname=$config->db['dbname']";
-        $dsn .= ";port=$config->db['port']";
+        $dsn = Config::DB['driver'];
+        $dsn .= ":host=".Config::DB['host'];
+        $dsn .= ";dbname=".Config::DB['dbname'];
+        $dsn .= ";port=".Config::DB['port'];
+        $dsn .= ";charset=".Config::DB['charset'];
 
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -32,7 +32,7 @@ abstract class Model
         }
 
    try {
-       return new PDO($dsn, $config['db']['user'], $config['db']['pass'], $options);
+       return new PDO($dsn, Config::DB['user'], Config::DB['pass'], $options);
    } catch (\PDOException $e) {
        throw new \PDOException($e->getMessage(), (int)$e->getCode());
    }
@@ -47,7 +47,7 @@ abstract class Model
     public Function getAll(): array
     {
         $db = $this->newDbCon();
-        $stmt = $db->query(“SELECT * from $this->table”);
+        $stmt = $db->query("SELECT * from $this->table");
 
         return $stmt->fetchAll();
     }
@@ -59,7 +59,8 @@ abstract class Model
     {
         $db = $this->newDbCon();
         $stmt = $db->prepare("SELECT * from $this->table where id=?");
-        return $stmt->execute([$id]);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
     }
 
     /**
@@ -67,7 +68,7 @@ abstract class Model
      * 1. Will extract values from $data
      * 2. Will create the prepared sql string with columns from $data
      */
-    protected function prepareDataForStmt(array $data)
+    protected function prepareDataForStmt(array $data): array
     {
         $columns = '';
         $values = [];
@@ -75,14 +76,14 @@ abstract class Model
         for($i=0; $i < count($data); $i++) {
 
             $values[]= $data[$i];
-            $columns += "key($data) = ? ";
+            $columns .= "key($data) = ? ";
          //if we are not at the last element with the iteration
          if(count($data) < ($i + 1)) {
-             $columns += "AND ";
+             $columns .= "AND ";
          }
        }
 
-        return [$columns, $values]
+        return [$columns, $values];
 }
 
     /**
